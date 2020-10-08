@@ -20,14 +20,19 @@ public class OmeroPassword extends JFrame {
     public OmeroPassword(String title) throws HeadlessException {
         super(title);
         JPanel panel = new JPanel();
+        panel.setBackground(new Color(190, 190, 200));
         GridLayout layout = new GridLayout(0, 2, 1, 1);
         JLabel userLabel = new JLabel("User");
+        userLabel.setHorizontalAlignment(SwingConstants.CENTER);
         JTextField userField = new JTextField(Prefs.get("OMERO.TB.user.string", "user"), 20);
         JLabel serverLabel = new JLabel("Server");
+        serverLabel.setHorizontalAlignment(SwingConstants.CENTER);
         JTextField serverField = new JTextField(Prefs.get("OMERO.TB.server.string", "server"), 100);
         JLabel portLabel = new JLabel("Port");
+        portLabel.setHorizontalAlignment(SwingConstants.CENTER);
         JTextField portField = new JTextField(Prefs.get("OMERO.TB.port.int", "4064"), 10);
         JLabel passwordlabel = new JLabel("Password");
+        passwordlabel.setHorizontalAlignment(SwingConstants.CENTER);
         JPasswordField passwordField = new JPasswordField(" ", 20);
         JButton cancelButton = new JButton("Cancel");
         JButton okButton = new JButton("OK");
@@ -43,7 +48,7 @@ public class OmeroPassword extends JFrame {
         panel.add(okButton);
         panel.add(cancelButton);
         add(panel);
-        setSize(600, 200);
+        setSize(500, 200);
         setVisible(true);
 
         okButton.addActionListener(new ActionListener() {

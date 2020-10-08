@@ -165,6 +165,9 @@ public class TAPAS_MENU extends JFrame {
         }
         textArea1.append(process);
         textArea1.append("\n");
+
+        // TEST
+        documentation.printCategories();
     }
 
     private void selectPlugins() {
@@ -178,6 +181,7 @@ public class TAPAS_MENU extends JFrame {
             Object object = cls.newInstance();
             currentTapas = (TapasProcessingAbstract) object;
             textFieldDescription.setText(currentTapas.getName());
+            textFieldDescription.setHorizontalAlignment(SwingConstants.CENTER);
             // documentation
             String doc = documentation.getDocumentation(currentTapas.getClass().getName());
             descriptionTAPAS.setText(doc);

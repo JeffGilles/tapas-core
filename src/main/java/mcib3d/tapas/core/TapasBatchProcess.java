@@ -297,7 +297,6 @@ public class TapasBatchProcess {
             e.printStackTrace();
             return null;
         }
-
         return map;
     }
 
