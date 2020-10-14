@@ -13,11 +13,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.*;
 import java.util.List;
 
 public class TAPAS_MENU2 extends JFrame implements ActionListener {
@@ -212,10 +215,11 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
         WindowManager.addWindow(this);
         WindowManager.setWindow(this);
 
-        comboBox1.setSelectedIndex(0);
-        setSelectedPlugin(comboBox1.getSelectedItem().toString());
         //selectPlugins(comboBox1.getSelectedItem().toString());
 
+        comboBox1.setSelectedIndex(0);
+        setSelectedPlugin(comboBox1.getSelectedItem().toString());
+        selectPlugins(comboBox1.getSelectedItem().toString());
         initText();
 
         //comboBox1.addActionListener(e -> selectPlugins(comboBox1.getSelectedItem().toString()));
@@ -234,23 +238,6 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
         exportButton.addActionListener(e -> exportToText());
     }
 
-    private void exportToText(){
-        String dir = IJ.getDirectory("Select saving folder for the .txt file");
-
-        try {
-            File myObj = new File("TAPAS.txt");
-            if (myObj.createNewFile()) {
-                IJ.showMessage("File created: " + myObj.getName());
-                //textArea1.getText();
-            } else {
-                IJ.showMessage("File already exists.");
-            }
-        } catch (IOException e) {
-            IJ.showMessage("An error occurred.");
-            e.printStackTrace();
-        }
-
-    }
     /**
      * Retrieve key from value between list and map
      * @param map1
@@ -272,7 +259,6 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
             }
         }
         return names;
-
 //                for (int i = 0; i < docCategories.get(key).size(); i++){
 //                    String fullName = docCategories.get(key).get(i);
 //                    //get Key from value (value = fullName)
@@ -315,7 +301,6 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
             IJ.log("Cannot find website");
         }
     }
-
 
     private void initText() {
         String process = "";
@@ -388,6 +373,30 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
             IJ.log("Pb class " + className);
         } catch (InstantiationException e) {
             IJ.log("Pb init " + className);
+        }
+    }
+
+    /**
+     Create and write text file from the generated text
+     */
+    private void exportToText(){
+        String dir = IJ.getDirectory("Select saving folder for the .txt file");
+        try {
+            //File file = new File(dir+File.separator+"TAPASfile.txt");
+            String hash = "TAPASfile";
+            File file = new File(dir, hash + ".txt");
+            if (file.createNewFile()) {
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(textArea1.getText());
+                bw.close();
+                IJ.showMessage("File created: " + file.getName());
+            } else {
+                IJ.showMessage("File already exists.");
+            }
+        } catch (IOException e) {
+            IJ.showMessage("An error occurred.");
+            e.printStackTrace();
         }
     }
 
