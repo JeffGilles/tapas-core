@@ -283,7 +283,7 @@
             <rowspec value="bottom:max(d;70px):noGrow"/>
             <rowspec value="top:3dlu:noGrow"/>
             <rowspec value="bottom:65px:noGrow"/>
-            <colspec value="left:max(d;50px):noGrow"/>
+            <colspec value="left:max(m;65px):noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="center:min(p;700px):grow"/>
             <constraints>
@@ -317,7 +317,7 @@
                   <forms top="0" left="7" bottom="0" right="0"/>
                 </constraints>
                 <properties>
-                  <text value="Parameters:"/>
+                  <text value="&lt;HTML&gt;&lt;U&gt;Parameters:&lt;/U&gt;&lt;/HTML&gt;"/>
                 </properties>
               </component>
               <component id="9a3ac" class="javax.swing.JLabel" binding="param1">

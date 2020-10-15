@@ -1,8 +1,8 @@
 package mcib3d.tapas.plugins;
 
-import com.sun.tools.javah.Util;
 import ij.IJ;
 import ij.WindowManager;
+import ij.io.SaveDialog;
 import ij.plugin.BrowserLauncher;
 import mcib3d.tapas.core.TapasBatchProcess;
 import mcib3d.tapas.core.TapasBatchUtils;
@@ -17,9 +17,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 
@@ -111,8 +108,6 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
             //IJ.log("" + key+" "+plugins.get(key));
         }
 
-        //Collections.sort(pluginsName);
-
         // documentation
         documentation = new TapasDocumentation();
         documentation.loadDocumentation(tapasFile.getParent() + File.separator + "tapasDocumentation.txt");
@@ -125,33 +120,8 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
         comboBox5.removeAllItems();
         comboBox6.removeAllItems();
 
+        // fill the combos
         for (String key : docCategories.keySet()) {
-            //IJ.log(""+key);
-//            if (key.contains("Input")){
-////                List<String> namesPlugins = retrieveNames(docCategories.get(key), plugins);
-////                IJ.log(""+namesPlugins.size());
-////                for( String key2 : namesPlugins){
-////                    comboBox1.addItem(key2);
-////                    IJ.log(key2);
-////                }
-//                IJ.log("docSize="+docCategories.get(key).size());
-//                for (int i = 0; i < docCategories.get(key).size(); i++){
-//                    String fullName = docCategories.get(key).get(i);
-//                    //get Key from value (value = fullName)
-//                    IJ.log(fullName);
-//                    for(String key2 : plugins.keySet()){
-//                        IJ.log(">>"+key2);
-//                        //if plugins value for the current key matches, return the key and add it in combobox
-//                        if( plugins.get(key2).equals(fullName) ){
-//                            IJ.log("_____________"+key2);
-//                            comboBox1.addItem(key2);
-//                        }
-//                    }
-//                }
-//                IJ.log("     "+key);
-//
-//            }
-
             if (key.contains("Input")) {
                 List<String> namesPlugins = retrieveNames(docCategories.get(key), plugins);
                 for (String key2 : namesPlugins) {
@@ -189,23 +159,8 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
                 }
             }
         }
-        // fill the combo
-
-        //for (String key : pluginsName) {
-        //    comboBox1.addItem(key);
-        //}
-//        for (int keyNb=0; keyNb< pluginsName.size(); keyNb++){
-////            if (keyNb <=13)comboBox1.addItem(pluginsName.get(keyNb));
-//            if (keyNb >13 && keyNb <=16)comboBox2.addItem(pluginsName.get(keyNb));
-//            if (keyNb >16 && keyNb <=26)comboBox3.addItem(pluginsName.get(keyNb));
-//            if (keyNb >26 && keyNb <=33)comboBox4.addItem(pluginsName.get(keyNb));
-//            if (keyNb >33 && keyNb <=53)comboBox5.addItem(pluginsName.get(keyNb));
-//            if (keyNb >53 && keyNb <pluginsName.size())comboBox6.addItem(pluginsName.get(keyNb));
-//        }
 
         // display the frame
-        //panel1.setMinimumSize(new Dimension(800, 600));
-        //panel1.setPreferredSize(new Dimension(800, 600));
         setContentPane(panel1);
         setTitle("TAPAS MENU " + TapasBatchProcess.version);
         pack();
@@ -215,8 +170,6 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
         WindowManager.addWindow(this);
         WindowManager.setWindow(this);
 
-        //selectPlugins(comboBox1.getSelectedItem().toString());
-
         comboBox1.setSelectedIndex(0);
         setSelectedPlugin(comboBox1.getSelectedItem().toString());
         selectPlugins(comboBox1.getSelectedItem().toString());
@@ -224,14 +177,12 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
 
         //comboBox1.addActionListener(e -> selectPlugins(comboBox1.getSelectedItem().toString()));
         comboBox1.addActionListener(this);
-//        comboBox1.setRenderer(new ComboSelectRenderer(comboBox1.getRenderer()));
         comboBox2.addActionListener(this);
         comboBox3.addActionListener(this);
         comboBox4.addActionListener(this);
         comboBox5.addActionListener(this);
         comboBox6.addActionListener(this);
 
-        //comboBox3.addActionListener(e -> selectPlugins());
         generateTextButton.addActionListener(e -> createText(selectedPlugin));
         documentationButton.addActionListener(e -> getDocumentation());
         websiteButton.addActionListener(e -> launchWebsite());
@@ -275,14 +226,7 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
         if( e.getSource() instanceof JComboBox) {
             String selected = ((JComboBox)e.getSource()).getSelectedItem().toString();
             selectPlugins(selected);
-            //IJ.log(""+((JComboBox)e.getSource()).isFontSet());
-//            if(((JComboBox)e.getSource()).isFontSet()==false){
-//
-//                ((JComboBox)e.getSource()).setForeground(Color.BLACK);
-//            }
-//            else{
-//                ((JComboBox)e.getSource()).setForeground(Color.RED);
-//            }
+            //((JComboBox<?>) e.getSource()).setBorder(BorderFactory.createLineBorder(Color.RED));
         }
     }
 
@@ -312,6 +256,10 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
         textArea1.append("\n");
     }
 
+    /**
+     * Create text in the textArea corresponding to the plugin parameters
+     * @param plugin
+     */
     private void createText(String plugin) {
         String process = "";
         process = process.concat("// " + currentTapas.getName() + "\n");
@@ -334,10 +282,12 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
         selectedPlugin = selected;
     }
 
+    /**
+     * Adjust the different fields to the selected plugin
+     * @param plugin
+     */
     private void selectPlugins(String plugin) {
-        //String plugin = comboBox1.getSelectedItem().toString();
         String className = plugins.get(plugin);
-        //IJ.log("Selected " + plugin + " " + className);
         // create plugin
         Class cls;
         try {
@@ -357,6 +307,7 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
                 paramsLabel[i].setText(parameters[i]);
                 paramsLabel[i].setVisible(true);
                 paramsText[i].setEnabled(true);
+                paramsText[i].setBackground(Color.white);
                 String par = currentTapas.getParameter(parameters[i]);
                 if ((par != null) && (!par.isEmpty())) paramsText[i].setText(par);
                 else paramsText[i].setText("");
@@ -366,6 +317,7 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
                 paramsLabel[i].setVisible(false);
                 paramsText[i].setEnabled(false);
                 paramsText[i].setText("");
+                paramsText[i].setBackground(new Color(200,200,206));
             }
         } catch (ClassNotFoundException e) {
             IJ.log("No class " + className);
@@ -380,11 +332,11 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
      Create and write text file from the generated text
      */
     private void exportToText(){
-        String dir = IJ.getDirectory("Select saving folder for the .txt file");
+        SaveDialog save = new SaveDialog("Save the generated .txt file", "TAPASfile", ".txt");
+        String dir = save.getDirectory();
+        String fileName = save.getFileName(); //with extension
         try {
-            //File file = new File(dir+File.separator+"TAPASfile.txt");
-            String hash = "TAPASfile";
-            File file = new File(dir, hash + ".txt");
+            File file = new File(dir, fileName);
             if (file.createNewFile()) {
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
@@ -392,7 +344,11 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
                 bw.close();
                 IJ.showMessage("File created: " + file.getName());
             } else {
-                IJ.showMessage("File already exists.");
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(textArea1.getText());
+                bw.close();
+                IJ.showMessage("File already overwrited.");
             }
         } catch (IOException e) {
             IJ.showMessage("An error occurred.");
@@ -400,39 +356,6 @@ public class TAPAS_MENU2 extends JFrame implements ActionListener {
         }
     }
 
-    private void createUIComponents() {
-    }
-
-
-//    public void actionPerformed(ActionEvent e) {
-//
+//    private void createUIComponents() {
 //    }
 }
-
-//class ComboSelectRenderer extends DefaultListCellRenderer {
-//
-//    private ListCellRenderer defaultRenderer;
-//
-//    public ComboSelectRenderer(ListCellRenderer defaultRenderer) {
-//        this.defaultRenderer = defaultRenderer;
-//    }
-//
-//    @Override
-//    public Component getListCellRendererComponent(JList list, Object value,
-//                                                  int index, boolean isSelected, boolean cellHasFocus) {
-//        Component c = defaultRenderer.getListCellRendererComponent(list, value,
-//                index, isSelected, cellHasFocus);
-//        if (c instanceof JLabel) {
-//            if (isSelected) {
-//                c.setForeground(Color.GREEN);
-//            } else {
-//                c.setForeground(Color.red);
-//            }
-//        } else {
-//            c.setBackground(Color.white);
-//            c = super.getListCellRendererComponent(list, value, index, isSelected,
-//                    cellHasFocus);
-//        }
-//        return c;
-//    }
-//}
